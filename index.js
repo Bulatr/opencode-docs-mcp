@@ -11,7 +11,8 @@ app.use(express.json());
 
 const BASE_URL = "https://opencode.ai/docs";
 const EMBEDDING_API = process.env.EMBEDDING_API || "http://localhost:1234/v1/embeddings";
-const LM_API_TOKEN = process.env.LM_API_TOKEN;
+const EMBEDDING_MODEL = process.env.EMBEDDING_MODEL || "text-embedding-nomic-embed-text-v1.5";
+const LM_API_TOKEN = process.env.LM_API_TOKEN || "sk-lm-tMIHNpro:HEZXMGgWqknUfxLlvi0j";
 const COLLECTION_NAME = "opencode_docs_v2";
 const DATA_DIR = "./data";
 
@@ -32,7 +33,7 @@ async function getEmbeddingsBatch(texts) {
     headers.Authorization = `Bearer ${LM_API_TOKEN}`;
   }
   const res = await axios.post(EMBEDDING_API, {
-    model: "text-embedding",
+    model: EMBEDDING_MODEL,
     input: texts
   }, { headers });
   return res.data.data.map(e => e.embedding);
