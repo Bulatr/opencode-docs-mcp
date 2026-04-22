@@ -1,0 +1,39 @@
+# OpenCode Docs MCP - Автоустановка
+
+Установи OpenCode Docs MCP сервер в текущий проект:
+
+1. Создай директорию `opencode-docs-mcp` в корне проекта
+2. Скопируй файлы `index.js` и `package.json` из репозитория https://github.com/Bulatr/opencode-docs-mcp
+3. Установи зависимости: `npm install`
+4. Запусти Chroma сервер (порт 8000):
+   ```
+   python -c "import chromadb; chromadb.run_local(); print('Chroma on :8000')"
+   ```
+5. Запусти MCP сервер (порт 3000):
+   ```
+   node index.js
+   ```
+6. Проверь работу:
+   ```
+   curl -X POST http://localhost:3000/tools/search_docs -H "Content-Type: application/json" -d '{"query":"agents","top_k":2}'
+   ```
+7. Добавь в `.opencode/settings.json`:
+   ```json
+   {
+     "mcp": {
+       "opencode_docs": {
+         "type": "local",
+         "url": "http://localhost:3000"
+       }
+     }
+   }
+   ```
+
+## Требования
+- Node.js 18+
+- Python 3.8+
+- LM Studio с embedding моделью (загрузить модель перед запуском)
+
+## Env переменные (опционально)
+- `LM_API_TOKEN` - токен LM Studio (по умолчанию: sk-lm-tMIHNpro:HEZXMGgWqknUfxLlvi0j)
+- `EMBEDDING_MODEL` - модель для эмбеддингов (по умолчанию: text-embedding-nomic-embed-text-v1.5)

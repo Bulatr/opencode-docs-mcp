@@ -338,6 +338,41 @@ npm start
 └─────────────────┘
 ```
 
+## Автоустановка в любой проект
+
+### PowerShell (Windows)
+
+```powershell
+# Скачать и запустить
+irm https://raw.githubusercontent.com/Bulatr/opencode-docs-mcp/main/setup.ps1 | iex
+```
+
+Или скопировать `setup.ps1` в проект и запустить:
+
+```powershell
+.\setup.ps1 -ProjectPath "./мой-проект"
+```
+
+### Bash (Linux/Mac)
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/Bulatr/opencode-docs-mcp/main/install.sh) ./мой-проект
+```
+
+### Промпт для OpenCode
+
+Скопируйте содержимое `setup-prompt.txt` и вставьте как команду в OpenCode.
+
+### Что делает автоустановка
+
+1. Создаёт директорию `opencode-docs-mcp`
+2. Копирует `index.js` и `package.json`
+3. Устанавливает зависимости (`npm install`)
+4. Запускает Chroma сервер (порт 8000)
+5. Запускает MCP сервер (порт 3000)
+6. Проверяет работу поиска
+7. Добавляет конфигурацию в `.opencode/settings.json`
+
 ## Структура файлов
 
 ```
@@ -345,6 +380,10 @@ opencode-docs-mcp/
 ├── index.js          # Основной сервер (MCP + RAG)
 ├── package.json      # Зависимости npm
 ├── run-chroma.py   # Скрипт запуска Chroma
+├── setup.ps1       # Автоустановка (PowerShell)
+├── install.sh      # Автоустановка (Bash)
+├── setup-prompt.txt # Промпт для OpenCode
+├── .opencode/      # Шаблон конфигурации
 ├── .env          # Переменные окружения
 ├── README.md     # Этот файл
 ├── AGENTS.md     # Инструкции для агентов
