@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  chroma:
+    image: chromadb/chroma:latest
+    container_name: opencode-chroma
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./chroma_data:/chroma/.chroma
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v2/heartbeat"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mcp:
+    build: .
+    container_name: opencode-mcp
+    ports:
+      - "3000:3000"
+    depends_on:
+      chroma:
+        condition: service_healthy
+    environment:
+      - CHROMA_URL=http://chroma:8000
+      - EMBEDDING_API=http://host.docker.internal:1234/v1/embeddings
+      - EMBEDDING_MODEL=text-embedding-nomic-embed-text-v1.5
+      - RERANK_API=http://host.docker.internal:1234/v1/rerank
+      - PORT=3000
+    restart: always
+    volumes:
+      - ./data:/app/data
+
+volumes:
+  chroma_data:

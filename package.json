@@ -1,18 +1,25 @@
 {
   "name": "opencode-docs-mcp",
-  "version": "1.0.0",
-  "description": "OpenCode MCP documentation server - RAG system",
+  "version": "2.0.0",
+  "description": "OpenCode MCP documentation server - Production RAG system",
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "node tests/runner.js",
+    "test:api": "node tests/api.test.js",
+    "test:skills": "node tests/agent-skills.test.js",
+    "test:all": "node tests/runner.js --all"
   },
   "dependencies": {
     "axios": "^1.7.0",
     "cheerio": "^1.0.0",
-    "express": "^4.18.0",
     "chromadb": "^1.8.0",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.0",
+    "fs-extra": "^11.2.0",
     "natural": "^6.10.0",
-    "fs-extra": "^11.2.0"
+    "prom-client": "^15.1.0"
   }
 }

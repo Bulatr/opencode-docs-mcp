@@ -7,14 +7,21 @@
 - Автоматический сбор документации с opencode.ai/docs
 - Векторное хранение в ChromaDB
 - Гибридный поиск (векторный + ключевые слова)
-- Переранжирование результатов по релевантности
+- Reranker (кросс-энкодер) для улучшения результатов
 - Инкрементальная индексация (только новые/изменённые документы)
+- Авто-восстановление при повреждении базы (до 3 попыток)
+- Фоновая индексация (не блокирует старт сервера)
+- Health-check, метрики и встроенные тесты
+- dotenv для загрузки переменных окружения
 
 ## Требования
 
 - Node.js 18+
 - Python 3.8+ (для Chroma сервера)
-- LM Studio с загруженной embedding-моделью
+- LM Studio с загруженной embedding-моделью:
+  - `text-embedding-nomic-embed-text-v1.5` (рекомендуется)
+  - `text-embedding-mxbai-embed-large-v1`
+  - `text-embedding-bge-reranker-base` (для reranker)
 
 ## Установка
 
@@ -316,26 +323,143 @@ npm start
 
 **Решение**: Дождитесь загрузки модели (строка вLM Studio: "Loaded").
 
+## Production
+
+### Auto-recovery
+
+Сервер автоматически восстанавливает Chroma при повреждении:
+
+```bash
+# Принудительное восстановление
+curl -X POST http://localhost:3000/admin/recover
+```
+
+### Фоновая индексация
+
+Индексация происходит в фоне после старта сервера:
+
+```bash
+# Проверить статус
+curl http://localhost:3000/health
+
+# Принудительная переиндексация
+curl -X POST http://localhost:3000/admin/reindex
+```
+
+### Endpoints
+
+| Endpoint | Метод | Описание |
+|---------|-------|---------|
+| `/` | GET | Информация о сервисе |
+| `/health` | GET | Статус сервера |
+| `/metrics` | GET | Метрики (запросы, ошибки, latency) |
+| `/tools/search_docs` | POST | Поиск документов |
+| `/tools/ask_docs` | POST | Вопрос по документации |
+| `/tools/run_tests` | POST | Запуск тестов |
+| `/admin/recover` | POST | Авто-восстановление базы |
+| `/admin/reindex` | POST | Полная переиндексация |
+
+### Метрики
+
+```json
+{
+  "requests": 150,
+  "errors": 2,
+  "avgSearchLatency": "45.3",
+  "avgRerankLatency": "120.5"
+}
+```
+
+## Тестирование
+
+### Запуск тестов
+
+```bash
+# Запустить все тесты
+npm run test:all
+
+# Только API тесты
+npm run test:api
+
+# Только тесты агент-скилз
+npm run test:skills
+```
+
+### Endpoint для тестов
+
+```bash
+curl -X POST http://localhost:3000/tools/run_tests \
+  -H "Content-Type: application/json" \
+  -d '{"type": "agent-skills"}'
+```
+
+### Пример результатов
+
+```
+📊 Results: 6/6 passed, 0/6 failed
+
+✅ [Built-in Agents] - Results: 3
+✅ [Custom Agent] - Results: 3
+✅ [Skill Placement] - Results: 3
+✅ [Skill Definition] - Results: 3
+✅ [Agent Config] - Results: 3
+✅ [Task Tool] - Results: 3
+
+🎉 All tests passed!
+```
+
+### Test Coverage
+
+| Категория | Тесты |
+|-----------|-------|
+| API Endpoints | `/health`, `/metrics`, `/tools/search_docs`, `/tools/ask_docs`, `/admin/recover`, `/admin/reindex` |
+| Agent Skills | Built-in agents, Custom agent, Skill placement, Skill definition, Agent config, Task tool |
+
+### Reranker
+
+Для улучшения качества поиска загрузите в LM Studio модель `bge-reranker-base`:
+
+```env
+RERANK_API=http://localhost:1234/v1/rerank
+```
+
 ## Архитектура
 
 ```
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│   opencode.ai   │────▶│   Crawler      │────▶│   Cleaner      │
-│    (docs)      │     │ (cheerio)      │     │ (HTML→text)   │
-└─────────────────┘     └──────────────────┘     └─────────────────┘
-                                                    │
-                                                    ▼
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│    ChromaDB    │◀────│  Embeddings     │◀────│   Chunker     │
-│   (vector DB)  │     │ (LM Studio)    │     │  (400 words)  │
-└─────────────────┘     └──────────────────┘     └─────────────────┘
-        │
-        ▼
-┌─────────────────┐
-│   Hybrid      │
-│   Search     │
-│  (MCP API)  │
-└─────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│                    Crawler (cheerio)                     │
+│                     opencode.ai/docs                    │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│                      Cleaner                         │
+│              HTML → text (400 words/chunk)              │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│                   Embeddings (LM Studio)                │
+│              text-embedding-nomic-embed-text           │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│                     ChromaDB                        │
+│                 (vector storage)                     │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│                    Hybrid Search                      │
+│         vector + keyword scoring + reranker            │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│                     MCP API                         │
+│    /tools/search_docs, /tools/ask_docs, /health     │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ## Автоустановка в любой проект
@@ -377,18 +501,24 @@ bash <(curl -sL https://raw.githubusercontent.com/Bulatr/opencode-docs-mcp/main/
 
 ```
 opencode-docs-mcp/
-├── index.js          # Основной сервер (MCP + RAG)
+├── index.js           # Основной сервер (MCP + RAG)
 ├── package.json      # Зависимости npm
-├── run-chroma.py   # Скрипт запуска Chroma
-├── setup.ps1       # Автоустановка (PowerShell)
-├── install.sh      # Автоустановка (Bash)
-├── setup-prompt.txt # Промпт для OpenCode
-├── .opencode/      # Шаблон конфигурации
-├── .env          # Переменные окружения
-├── README.md     # Этот файл
-├── AGENTS.md     # Инструкции для агентов
-├── chroma_db/    # Векторная база данных
-└── data/        # Кэш документов
+├── run-chroma.py    # Скрипт запуска Chroma
+├── setup.ps1        # Автоустановка (PowerShell)
+├── install.sh       # Автоустановка (Bash)
+├── setup-prompt.txt  # Промпт для OpenCode
+├── .opencode/       # Шаблон конфигурации
+├── .env           # Переменные окружения
+├── docker-compose.yml # Docker deployment
+├── Dockerfile      # Container image
+├── README.md      # Этот файл
+├── AGENTS.md      # Инструкции для агентов
+├── tests/         # Тесты
+│   ├── runner.js
+│   ├── api.test.js
+│   └── agent-skills.test.js
+├── chroma_db/     # Векторная база данных
+└── data/         # Кэш документов
 ```
 
 ## Лицензия
