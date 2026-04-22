@@ -51,7 +51,7 @@ cat > "$CONFIG_FILE" << 'EOF'
 {
   "mcp": {
     "opencode_docs": {
-      "type": "local",
+      "type": "remote",
       "url": "http://localhost:3000"
     }
   }

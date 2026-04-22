@@ -54,7 +54,7 @@ Or set env var: `set LM_API_TOKEN=your-token`
 {
   "mcp": {
     "opencode_docs": {
-      "type": "local",
+      "type": "remote",
       "url": "http://localhost:3000"
     }
   }

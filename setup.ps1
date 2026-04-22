@@ -66,7 +66,7 @@ $settingsFile = Join-Path $opencodeDir "settings.json"
 $settings = @{
     mcp = @{
         opencode_docs = @{
-            type = "local"
+            type = "remote"
             url = "http://localhost:3000"
         }
     }
