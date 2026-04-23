@@ -4,10 +4,24 @@
 OpenCode MCP documentation server - a RAG system that crawls, indexes, and serves OpenCode documentation via MCP tools.
 
 ## Implementation Status
-- ✅ `index.js` created (224 lines)
-- ✅ `package.json` created
-- ⚠️ Chroma server must run on :8000 before starting MCP server
-- ⚠️ LM Studio must have embedding model loaded
+- ✅ `main.py` created (Python Flask server)
+- ✅ Chroma server runs on :8000
+- ✅ LM Studio with embedding model
+- ✅ MCP configured in `.opencode/settings.json`
+
+## MCP Configuration
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "opencode_docs": {
+      "type": "remote",
+      "url": "http://localhost:3000",
+      "enabled": true
+    }
+  }
+}
+```
 
 ## Architecture
 ```

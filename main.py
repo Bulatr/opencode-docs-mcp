@@ -333,10 +333,11 @@ def init_chroma() -> bool:
 
     for attempt in range(3):
         try:
-            chroma_client = chromadb.Client(Settings(
-                anonymized_telemetry=False,
-                allow_reset=True
-            ))
+            chroma_client = chromadb.HttpClient(
+                host="localhost",
+                port=8000,
+                ssl=False
+            )
 
             collection = chroma_client.get_or_create_collection(name=COLLECTION_NAME)
             count = collection.count()
@@ -386,7 +387,7 @@ def info():
 
 @app.route("/health", methods=["GET"])
 def health():
-    if not is_ready:
+    if not is_ready or collection is None:
         return jsonify({"status": "initializing"}), 503
 
     try:
