@@ -57,6 +57,8 @@ DO NOT apply if:
 - Allow parallel execution for:
   - backend_dev + frontend_dev
   - research subagents
+  - architect subagents
+  - writer subagents
 - Minimize loops (max 2 iterations per stage)
 
 ---
