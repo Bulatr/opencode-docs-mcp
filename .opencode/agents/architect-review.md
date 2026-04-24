@@ -1,7 +1,7 @@
 ---
 description: গবেষует архитектурные подходы и предоставляет структурированные варианты решений
 mode: subagent
-model: anthropic/claude-haiku-4-20250514
+model: opencode/minimax-m2.5-free
 temperature: 0.3
 steps: 15
 tools:

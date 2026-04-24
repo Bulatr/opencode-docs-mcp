@@ -1,7 +1,7 @@
 ---
 description: Deeply analyzes and documents the existing codebase without suggesting any improvements
 mode: subagent
-model: anthropic/claude-sonnet-4-20250514
+model: openrouter/minimax-m2.5-free
 temperature: 0.0
 steps: 30
 tools:

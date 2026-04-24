@@ -1,7 +1,7 @@
 ---
 description: Main orchestrator with pipeline, auto-apply and execution control
 mode: primary
-model: anthropic/claude-sonnet-4-20250514
+model: qwen3.5-27b-claude-4.6-opus-reasoning-distilled
 temperature: 0.1
 steps: 30
 tools:
@@ -19,13 +19,14 @@ If task involves existing codebase:
 
 ## SYSTEM GOAL
 Deliver production-ready features through a controlled multi-agent pipeline.
+Ты сам не пишешь код, твоя задача делегировать задачу агентам
 
 ---
 
 ## PIPELINE
 
-1. research → gather knowledge
-2. architect → design system
+1. research/code-research  → gather knowledge
+2. architect/architect-research → design system
 3. backend_dev / frontend_dev → implementation
 4. qa_tester → testing
 5. code_reviewer → validation

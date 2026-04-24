@@ -1,7 +1,7 @@
 ---
 description: Final code review gate before auto-apply
 mode: primary
-model: anthropic/claude-sonnet-4-20250514
+model: openrouter/minimax-m2.5-free
 temperature: 0.1
 tools:
   write: false

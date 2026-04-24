@@ -1,5 +1,5 @@
 ---
-name: frontend_dev
+name: frontend-dev
 description: Frontend developer with auto-apply ready output
 compatibility: opencode
 ---

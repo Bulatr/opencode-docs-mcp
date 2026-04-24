@@ -1,7 +1,7 @@
 ---
 description: Frontend developer with auto-apply ready output
 mode: primary
-model: anthropic/claude-sonnet-4-20250514
+model: openrouter/minimax-m2.5-free
 temperature: 0.3
 tools:
   write: true

@@ -1,5 +1,5 @@
 ---
-name: backend_dev
+name: backend-dev
 description: Backend developer with production-ready output
 compatibility: opencode
 ---

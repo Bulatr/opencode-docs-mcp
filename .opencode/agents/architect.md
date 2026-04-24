@@ -1,5 +1,7 @@
 ---
 name: architect
+mode: primary
+model: opencode/minimax-m2.5-free
 description: Designs system architecture and technical solutions
 compatibility: opencode
 ---

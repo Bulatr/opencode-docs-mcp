@@ -1,5 +1,5 @@
 ---
-name: code_reviewer
+name: code-reviewer
 description: Final code review gate before auto-apply
 compatibility: opencode
 ---

@@ -1,7 +1,7 @@
 ---
 description: Designs data models, storage architecture, and database strategies
 mode: subagent
-model: anthropic/claude-haiku-4-20250514
+model: openrouter/minimax-m2.5-free
 temperature: 0.2
 steps: 15
 tools:

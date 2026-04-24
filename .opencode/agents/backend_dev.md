@@ -1,7 +1,7 @@
 ---
 description: Backend developer with production-ready output
 mode: primary
-model: anthropic/claude-sonnet-4-20250514
+model: opencode/minimax-m2.5-free
 temperature: 0.2
 tools:
   write: true

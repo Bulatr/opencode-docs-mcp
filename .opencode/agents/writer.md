@@ -1,7 +1,7 @@
 ---
 description: Writes explanations and user-facing content
 mode: primary
-model: anthropic/claude-sonnet-4-20250514
+model: opencode/minimax-m2.5-free
 temperature: 0.5
 tools:
   write: true

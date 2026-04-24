@@ -1,5 +1,5 @@
 ---
-name: qa_tester
+name: qa-tester
 description: QA gate for pipeline validation
 compatibility: opencode
 ---

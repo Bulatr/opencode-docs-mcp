@@ -1,7 +1,7 @@
 ---
 description: Analyzes and documents the current system state without proposing improvements
 mode: primary
-model: anthropic/claude-sonnet-4-20250514
+model: qwen3.5-27b-claude-4.6-opus-reasoning-distilled
 temperature: 0.1
 steps: 25
 tools:
